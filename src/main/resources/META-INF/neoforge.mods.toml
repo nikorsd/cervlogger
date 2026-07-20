@@ -1,0 +1,27 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "AGPL-3.0-only"
+
+[[mods]]
+modId = "cervlogger"
+version = "${mod_version}"
+displayName = "CervLogger"
+description = '''Block logging, lookup, rollback and restore for NeoForge servers.'''
+credits = "Modelled after CoreProtect by Intelli/PlayPro"
+displayURL = "https://modrinth.com/mod/cervlogger"
+issueTrackerURL = "https://github.com/scarletjess7900/cervlogger/issues"
+authors = "scarletjess"
+
+[[dependencies.cervlogger]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.1.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.cervlogger]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.1]"
+ordering = "NONE"
+side = "BOTH"

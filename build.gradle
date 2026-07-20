@@ -1,0 +1,71 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.78'
+}
+
+version = project.mod_version
+group = 'net.cervlogger'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+neoForge {
+    version = project.neo_version
+
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+        }
+    }
+
+    mods {
+        cervlogger {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+dependencies {
+    // SQLite JDBC driver, embedded into the mod jar via Jar-in-Jar
+    jarJar(implementation('org.xerial:sqlite-jdbc')) {
+        version {
+            strictly '[3.46, 4.0)'
+            prefer '3.46.1.3'
+        }
+    }
+
+    // MySQL driver (optional storage backend), also embedded via Jar-in-Jar
+    jarJar(implementation('com.mysql:mysql-connector-j')) {
+        version {
+            strictly '[8.4, 10.0)'
+            prefer '8.4.0'
+        }
+        // Protobuf is only needed for the X DevAPI, not for plain JDBC
+        exclude group: 'com.google.protobuf'
+    }
+
+    // Jar-in-Jar content only exists inside the built jar; dev runs (runClient/runServer)
+    // need the libraries on the runtime classpath explicitly.
+    additionalRuntimeClasspath 'org.xerial:sqlite-jdbc:3.46.1.3'
+    additionalRuntimeClasspath('com.mysql:mysql-connector-j:8.4.0') {
+        exclude group: 'com.google.protobuf'
+    }
+}
+
+processResources {
+    var expandProps = [mod_version: project.mod_version]
+    inputs.properties expandProps
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand expandProps
+    }
+}
