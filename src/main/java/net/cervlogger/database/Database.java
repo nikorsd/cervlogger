@@ -106,14 +106,7 @@ public final class Database {
      */
     public static Connection ensureConnection() throws SQLException {
         if (connection != null) {
-            boolean alive;
-            try {
-                alive = !connection.isClosed() && connection.isValid(2);
-            }
-            catch (SQLException e) {
-                alive = false;
-            }
-            if (alive) {
+            if (isConnected()) {
                 return connection;
             }
             CervLogger.LOGGER.warn("[CervLogger] Database connection lost, attempting to reconnect to {}", description());
@@ -146,6 +139,16 @@ public final class Database {
 
     public static boolean isReady() {
         return connection != null;
+    }
+
+    /** True if the current connection is open and passes a validity check. Must be called under {@link #lock()}. */
+    public static boolean isConnected() {
+        try {
+            return connection != null && !connection.isClosed() && connection.isValid(2);
+        }
+        catch (SQLException e) {
+            return false;
+        }
     }
 
     public static Path databaseFile() {
